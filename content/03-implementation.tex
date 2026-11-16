@@ -1,0 +1,64 @@
+\section{Detalles de implementación}
+
+\textbf{Dominios ajustados.} Cada elemento de los arreglos de variables recibe su propio dominio a partir de los datos: $e_{s,i}$ va de $m_{s,i}$ a $d_{s,i}$, $p_{k,i}$ de 0 a $\bar{p}_k$, y $a_{k,i}$ queda fija en 0 si la central no puede estar nunca en régimen alto. Así, R2 y R3 no necesitan restricciones aparte. Los parámetros derivados ($u_k$, $m_{s,i}$, $\bar{p}_k$, $c_{\min}$) se calculan en el modelo a partir de \texttt{Datos.dzn}, de modo que el archivo de datos solo contiene lo que pide el enunciado.
+
+\textbf{Validación de los datos.} Cinco aserciones rechazan datos inválidos: cantidades negativas, porcentajes fuera de 0 a 100 o $L_k < 1$. Si en algún día el mínimo exigido supera la capacidad total, el modelo no se detiene: imprime un aviso y deja que el solver reporte que el problema no tiene solución. Así el modelo distingue un archivo mal escrito de una instancia infactible.
+
+\textbf{Implementaciones.} Como en el Taller 1, el modelo tiene dos parámetros de experimentación: \texttt{impl}, que elige la implementación, y \texttt{strategy}, que elige la estrategia de búsqueda. Cada valor de \texttt{impl} agrega un solo elemento al anterior (Tabla~\ref{tab:plantas-impl}), así que la diferencia entre dos valores consecutivos mide el efecto de ese elemento.
+
+\begin{table}[htbp]
+    \caption{Implementaciones del modelo de plantas de energía}
+    \label{tab:plantas-impl}
+    \small
+    \begin{tabularx}{\textwidth}{@{}cLLL@{}}
+        \toprule
+        \texttt{impl} & Contenido & Ventaja & Desventaja \\
+        \midrule
+        1 & R4 con restricciones reificadas: $a_{k,i} = [p_{k,i} > u_k]$ & Traducción directa de la definición & Restricción condicionada por el valor de una variable \\
+        2 & R4 con dos desigualdades lineales: $(u_k + 1) \cdot a_{k,i} \le p_{k,i} \le u_k + (\mathit{cap}_k - u_k) \cdot a_{k,i}$ & Sin reificación; la misma poda que la variante 1 & Ligeramente más lenta por nodo en Gecode \\
+        3 & \texttt{impl} 2 + dominancia RD1 a RD4 & Permite demostrar la optimalidad & Son disyunciones \\
+        4 & \texttt{impl} 3 + redundantes RR1 y RR2 & Ninguna medible & Algo más de tiempo por nodo \\
+        5 & \texttt{impl} 4 + ruptura de simetrías RS1 y RS2 & Menos nodos cuando hay centrales o clientes idénticos & Ninguna medible \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Por qué R4 es lineal.} Las variantes 1 y 2 podan exactamente lo mismo: en las dos instancias diminutas, que las dos variantes resuelven sin dominancia, exploran el mismo número de nodos ($9\,756\,149$ y $29\,392\,149$ con la estrategia 2). La forma lineal fue algo más lenta por nodo (13,9~s frente a 10,7~s y 36,5~s frente a 32,5~s). Se eligió la forma lineal porque evita una restricción condicionada por el valor de una variable, como pide la rúbrica, y la cambia por dos desigualdades lineales que definen $a_{k,i}$ exactamente: si $a_{k,i} = 0$, la producción no supera el umbral, y si $a_{k,i} = 1$, lo supera.
+
+\textbf{Efecto de cada elemento.} Para medir cada elemento se usaron 10 instancias construidas con ese fin (script \texttt{generar\_experimentos.py}). Son distintas de las instancias de pruebas del ejercicio: el ejemplo de \texttt{Datos.dzn} y dos variantes, dos instancias medianas, tres con una central y un cliente repetidos, y dos diminutas. Se siguió el protocolo del Taller 1: Gecode, estrategia 2 y 60~s por corrida. La Tabla~\ref{tab:plantas-ablacion} muestra los nodos necesarios para encontrar el óptimo y demostrar que lo es.
+
+\begin{table}[htbp]
+    \caption{Nodos para demostrar el óptimo con cada implementación (Gecode, estrategia 2)}
+    \label{tab:plantas-ablacion}
+    \small
+    \begin{tabular}{@{}lrrrrr@{}}
+        \toprule
+        Instancia & \texttt{impl} 1 & \texttt{impl} 2 & \texttt{impl} 3 & \texttt{impl} 4 & \texttt{impl} 5 \\
+        \midrule
+        \texttt{exp\_01} & $\dagger$\,49,8~M & $\dagger$\,45,6~M & 9 & 9 & 9 \\
+        \texttt{exp\_02} & $\dagger$\,52,0~M & $\dagger$\,49,3~M & 9 & 9 & 9 \\
+        \texttt{exp\_03} & $\dagger$\,43,3~M & $\dagger$\,37,5~M & 391 & 391 & 391 \\
+        \texttt{exp\_04} & $\dagger$\,74,7~M & $\dagger$\,72,5~M & 344\,071 & 344\,071 & 344\,071 \\
+        \texttt{exp\_05} & $\dagger$\,72,9~M & $\dagger$\,73,7~M & 7,8~M & 7,8~M & 7,8~M \\
+        \texttt{exp\_06} & $\dagger$\,55,6~M & $\dagger$\,48,1~M & 3,6~M & 3,6~M & 1,0~M \\
+        \texttt{exp\_07} & $\dagger$\,68,4~M & $\dagger$\,64,3~M & 94\,469 & 94\,469 & 36\,475 \\
+        \texttt{exp\_08} & $\dagger$\,85,0~M & $\dagger$\,85,1~M & $\dagger$\,36,3~M & $\dagger$\,31,8~M & 13,7~M \\
+        \texttt{exp\_09} & 9,8~M & 9,8~M & 135 & 135 & 135 \\
+        \texttt{exp\_10} & 29,4~M & 29,4~M & 203 & 203 & 203 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+En la tabla, $\dagger$ indica que la corrida alcanzó el límite de 60~s sin demostrar el óptimo, y el número que sigue son los nodos explorados hasta ese momento; M abrevia millones. Las instancias son, en orden, el ejemplo de \texttt{Datos.dzn} y dos variantes (a escala 1/10 y con capacidad escasa), dos medianas (3 centrales, 4 clientes y 7 días; 4 centrales, 5 clientes y 7 días), tres con una central y un cliente repetidos, y dos diminutas. De la tabla se concluye lo siguiente:
+
+\begin{enumerate}
+    \item \textbf{La dominancia es el elemento decisivo.} Sin ella, Gecode no demuestra el óptimo de ninguna instancia de tamaño real en 60~s, aunque en algunas lo encuentra: en el ejemplo, la estrategia 2 llega a la ganancia óptima, pero después de 45,6 millones de nodos todavía no ha demostrado que lo es. Con dominancia, ese mismo ejemplo se resuelve en 9 nodos, y la instancia diminuta \texttt{exp\_10} pasa de $29\,392\,149$ nodos a 203.
+    \item \textbf{Las restricciones redundantes no podan.} Con y sin RR1 y RR2 el número de nodos es idéntico en las instancias que se resuelven; en \texttt{exp\_08}, el número menor de nodos explorados en 60~s (31,8 frente a 36,3 millones) solo indica que cada nodo tarda más. La explicación está en el apartado Restricciones redundantes del modelo.
+    \item \textbf{La ruptura de simetrías reduce el árbol cuando hay objetos idénticos.} En las tres instancias con una central y un cliente repetidos, los nodos bajan 3,5 veces en \texttt{exp\_06} y 2,6 veces en \texttt{exp\_07}, y \texttt{exp\_08} pasa de no resolverse en 60~s a resolverse en 13,7 millones de nodos (27,3~s). En las demás instancias no cambia nada, como se esperaba, porque no hay nada que romper.
+\end{enumerate}
+
+\textbf{Límites del modelo con Gecode.} En dos instancias grandes, con 5 centrales, 8 clientes y 14 días, y con 6 centrales, 12 clientes y 30 días, el modelo completo con la estrategia 2 no demuestra el óptimo en 60~s. Las mejores ganancias que encuentra son $1\,126\,603$ y $2\,718\,866$. Los solvers de programación entera HiGHS y COIN-BC, con el mismo modelo, demuestran que los óptimos son $1\,131\,823$ y $2\,726\,977$, así que las soluciones de Gecode están a 0,46~\% y 0,30~\% del óptimo. La dominancia también ayuda a HiGHS: en la instancia de 30 días, demostrar el óptimo pasa de 14,7~s con \texttt{impl} 2 a 0,67~s con \texttt{impl} 3.
+
+\textbf{Verificación de la corrección.} Para comprobar que el modelo resuelve el problema del enunciado, y no solo que es coherente consigo mismo, se escribió un solucionador independiente en Python (\texttt{verificar\_optimo.py}) que no usa MiniZinc. Recorre los días con programación dinámica: prueba todas las producciones posibles de cada central, reparte la energía primero a los clientes que más pagan y lleva la cuenta de los días seguidos en régimen alto de cada central. En 400 instancias pequeñas aleatorias, 170 de ellas infactibles, las cinco implementaciones con las tres estrategias, $6\,000$ corridas en total, coincidieron con él en la ganancia óptima o en la infactibilidad, y todas demostraron la optimalidad. En otras 300 instancias con más capacidad, donde las reglas de dominancia actúan más a menudo, \texttt{impl} 3 e \texttt{impl} 5 coincidieron en las $1\,800$ corridas. Esto confirma empíricamente que las restricciones de dominancia nunca eliminan una solución óptima.
+
+\textbf{Salida.} El modelo imprime la ganancia, una tabla con la producción de cada central por día, con un asterisco en los días de régimen alto, y una tabla con lo entregado y lo pedido por cada cliente. Para \texttt{Datos.dzn}, la ganancia óptima es $144\,630$: todos los clientes reciben toda su demanda, la térmica no produce, y la hidroeléctrica alterna 300~MW (régimen alto) y 240~MW, como exige R5.
