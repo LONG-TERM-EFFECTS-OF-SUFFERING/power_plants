@@ -1,0 +1,1 @@
+50 corridas en resultados/ablacion_gecode.csv

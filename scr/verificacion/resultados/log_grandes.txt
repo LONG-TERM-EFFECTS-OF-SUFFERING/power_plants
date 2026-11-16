@@ -1,0 +1,1 @@
+6 corridas en resultados/grandes_gecode.csv

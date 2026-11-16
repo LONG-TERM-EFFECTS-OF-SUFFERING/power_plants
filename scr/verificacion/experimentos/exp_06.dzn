@@ -1,0 +1,16 @@
+% exp_06: con simetrías; P4 es idéntica a P1 y S4 es idéntico a S1 (semilla 21)
+nPlantas           = 4;
+nombrePlanta       = ["P1", "P2", "P3", "P4"];
+capacidad          = [42, 59, 51, 42];
+costo              = [12, 56, 6, 12];
+porcentajeAlto     = [70, 60, 80, 70];
+diasAltoProhibidos = [3, 3, 3, 3];
+nClientes     = 4;
+nombreCliente = ["S1", "S2", "S3", "S4"];
+pago          = [39, 43, 24, 39];
+nDias   = 5;
+demanda = [|   54,   39,   28,   36,   37
+           |   61,   28,   31,   59,   54
+           |   59,   48,   36,   45,   33
+           |   54,   39,   28,   36,   37 |];
+G = 50;

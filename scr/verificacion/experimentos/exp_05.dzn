@@ -1,0 +1,17 @@
+% exp_05: mediana, 4 centrales, 5 clientes, 7 días (semilla 5)
+nPlantas           = 4;
+nombrePlanta       = ["P1", "P2", "P3", "P4"];
+capacidad          = [248, 260, 592, 201];
+costo              = [39, 48, 45, 18];
+porcentajeAlto     = [60, 80, 60, 70];
+diasAltoProhibidos = [3, 2, 3, 3];
+nClientes     = 5;
+nombreCliente = ["S1", "S2", "S3", "S4", "S5"];
+pago          = [41, 38, 53, 28, 62];
+nDias   = 7;
+demanda = [|  163,  295,  240,  236,   86,  238,  259
+           |  267,  172,  102,  165,  176,  295,  164
+           |  209,  264,  166,  133,  209,  206,  266
+           |  131,  100,  151,  335,  326,   91,  329
+           |  277,  177,  302,  189,   90,  226,  287 |];
+G = 50;

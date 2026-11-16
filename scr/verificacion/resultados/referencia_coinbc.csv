@@ -1,0 +1,13 @@
+instancia,impl,estrategia,solver,estado,ganancia,tiempo_compilacion_s,tiempo_s,nodos,fallos,profundidad
+exp_01,5,1,coin-bc,optimo,144630,0.138662,0.0043,0,,
+exp_02,5,1,coin-bc,optimo,14485,0.132376,0.0045,0,,
+exp_03,5,1,coin-bc,optimo,14015,0.134638,0.0091,0,,
+exp_04,5,1,coin-bc,optimo,176598,0.138049,0.0499,0,,
+exp_05,5,1,coin-bc,optimo,61629,0.1449,0.0175,0,,
+exp_06,5,1,coin-bc,optimo,17827,0.151807,0.0485,0,,
+exp_07,5,1,coin-bc,optimo,32996,0.145759,0.0338,0,,
+exp_08,5,1,coin-bc,optimo,28561,0.131926,0.0165,0,,
+exp_09,5,1,coin-bc,optimo,282,0.123744,0.0071,0,,
+exp_10,5,1,coin-bc,optimo,268,0.126317,0.0112,0,,
+exp_11,5,1,coin-bc,optimo,1131823,0.213674,0.1418,0,,
+exp_12,5,1,coin-bc,optimo,2726977,0.454719,5.8574,0,,

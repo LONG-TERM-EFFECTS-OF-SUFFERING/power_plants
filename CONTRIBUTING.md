@@ -11,7 +11,7 @@ The workshop is sized for 18 hours of individual work. With three people, the ex
 |                              | Person A: model                                                                                                  | Person B: data and tests                                                     | Person C: search and analysis                                                         |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | **Who**                      | Brandon                                                                                                          |                                                                              |                                                                                       |
-| **Owns**                     | `PlantaEnergia.mzn`; the formal model in the report                                                              | The 10 instances in `tests/`; `run_tests.sh` and its CSV                     | Search annotations (`strategy`); solver comparison; analysis; the delivery `readme.txt` |
+| **Owns**                     | `PlantaEnergia.mzn`; the formal model in the report                                                              | The 10 instances in `tests/`; their results CSV                              | Search annotations (`strategy`); solver comparison; analysis; the delivery `readme.txt` |
 | **Main tasks**               | Constraints in formal notation, with justification; any number of plants; regime rule per plant; `assert`s on the data | Instances that make each constraint matter (list below); hand-checked optimum on 2–3 tiny instances | At least 2–3 annotations; compare Gecode with a MIP solver (HiGHS, COIN-BC)           |
 | **Redundant and symmetry**   | Write them and prove them                                                                                        | Instances where they matter (repeated plants or clients)                     | Measure their effect                                                                  |
 | **Report sections**          | Descripción del problema, Modelo, Detalles de implementación                                                     | Pruebas                                                                      | La búsqueda, Análisis, Conclusiones                                                   |
@@ -30,37 +30,26 @@ Person B's 10 instances must include:
 
 **Timeline (3 weeks).**
 
-1. Week 1: A has a model running on B's first small instance. B agrees the `.dzn` format with A on day 1, since it is the interface between them. C sets up `run_tests.sh` and the report skeleton.
+1. Week 1: A has a model running on B's first small instance. B agrees the `.dzn` format with A on day 1, since it is the interface between them. C sets up the test runs and the report skeleton.
 2. Week 2: A adds the regime rule for every plant and the redundant and symmetry constraints. B finishes the 10 instances and the optimality checks. C runs the strategies and solvers.
 3. Week 3: C runs the final experiment on one machine. Everyone writes their section, then the cross-review.
 
-**Status.** Person A's report text is in `content/01` to `content/03`. The model, `Datos.dzn` and A's experiment scripts (`generar_experimentos.py`, `verificar_optimo.py`, `verificacion/resultados/`) still have to be copied into `scr/power_plants/`.
+**Status.** Person A's part is done: the report text in `content/01` to `content/03`, and in `scr/` the model, `Datos.dzn` and the experiments in `verificacion/` (scripts, instances `exp_01`–`exp_12` and results). `tests/` waits for Person B.
 
 ## The shared contract
 
 These come from Person A's model ([`content/02-model.tex`](content/02-model.tex)) and are already cited in the report. Changing any of them means changing the `.mzn`, the report and every CSV that depends on it, so it goes through Person A.
 
-- **Notation.** Sets $\mathcal{K}$ (plants), $\mathcal{S}$ (clients), $\mathcal{D}$ (days); variables $p_{k,i}$ (production), $e_{s,i}$ (delivery), $a_{k,i}$ (high regime). These replace the names in the first plan (`alto`, `umbral`).
+- **Notation.** Sets $\mathcal{K}$ (plants), $\mathcal{S}$ (clients), $\mathcal{D}$ (days); variables $p_{k,i}$ (production), $e_{s,i}$ (delivery), $a_{k,i}$ (high regime). In the code they are `p`, `e`, `alto`; the derived parameters $u_k$, $m_{s,i}$, $\bar{p}_k$, $c_{\min}$ are `umbral`, `minimo`, `maxP`, `costoMin`.
 - **Constraint labels.** R1–R5 (problem), RD1–RD4 (dominance), RR1–RR2 (redundant), RS1–RS2 (symmetry). The same labels go in the `.mzn` comments and in the report. Don't renumber them.
 - **`Datos.dzn` format.** The fields in Table `tab:plantas-formato`: `nPlantas`, `nClientes`, `nDias`, `nombrePlanta`, `nombreCliente`, `capacidad`, `costo`, `porcentajeAlto`, `diasAltoProhibidos`, `pago`, `demanda`, `G`. Every instance uses exactly these.
 - **`impl` 1–5.** Each adds one element to the previous one (Table `tab:plantas-impl`): 1 reified R4, 2 linear R4, 3 + dominance, 4 + redundant, 5 + symmetry breaking.
 - **`strategy`.** Person A's text already cites strategy 2 (used in every ablation run) and strategy 3 (finds no solution on the large instances in 60 s). Person C defines the annotations but keeps those numbers, or updates A's text together with A.
 - **Interpretation of G.** Each client gets between G % and 100 % of its demand every day, and the profit decides how much. Still to be confirmed with the professor.
 
-## Repository layout
+## Report files
 
-```text
-.
-├── statement.pdf               assignment
-├── main.tex                    report entry point: front page + content/
-├── preamble.tex                packages and macros
-├── front_page.tex              APA title page: title, authors, course, professor
-├── bibliography.bib            references
-├── content/                    one .tex file per report section (owners below)
-├── assets/                     images for the report
-├── scr/power_plants/           PlantaEnergia.mzn, Datos.dzn, tests/, run_tests.sh, results/, verificacion/
-└── build/                      LaTeX output (gitignored)
-```
+The repository layout, the requirements and how to run everything are in the [README](README.md). Each report section has one owner:
 
 | File                            | Report section             | Owner |
 | ------------------------------- | -------------------------- | ----- |
@@ -72,25 +61,6 @@ These come from Person A's model ([`content/02-model.tex`](content/02-model.tex)
 | `content/06-analysis.tex`       | Análisis                   | C     |
 | `content/07-conclusions.tex`    | Conclusiones               | C     |
 
-## Requirements and running
-
-- MiniZinc 2.9 or later, full bundle (Gecode, HiGHS and COIN-BC included). Tested with MiniZinc 2.9.3 and Gecode 6.3.0.
-- Bash for `run_tests.sh`; on Windows, Git Bash or WSL.
-- A LaTeX distribution with `latexmk`, `biber`, `apa7` and `biblatex-apa`. A full TeX Live install has all of them.
-
-```sh
-cd scr/power_plants
-# -s prints statistics; a line "==========" means the optimum was proved
-minizinc --solver gecode -s PlantaEnergia.mzn Datos.dzn -D "impl=5;strategy=2"
-minizinc --solver highs  -s PlantaEnergia.mzn Datos.dzn -D "impl=5;strategy=2"
-minizinc --solver cbc    -s PlantaEnergia.mzn Datos.dzn -D "impl=5;strategy=2"
-
-# Report, from the repository root
-latexmk                                 # writes build/main.pdf
-grep -E '^!|undefined' build/main.log   # must print nothing
-latexmk -C                              # removes the build output
-```
-
 ## Models
 
 - Start the `.mzn` with a header comment like Taller 1's `kakuro.mzn`: workshop, authors, usage line, and the meaning of each `impl` and `strategy` value. Comments in Spanish.
@@ -101,8 +71,8 @@ latexmk -C                              # removes the build output
 
 ## Tests and results
 
-- Instances are `tests/plantas_NN.dzn`. `Datos.dzn` is the statement's example. Person A's ablation instances (`exp_01`–`exp_10`) are separate and stay in `verificacion/`.
-- Start `run_tests.sh` from Taller 1's `scr/kakuro/run_tests.sh`. For a COP it also needs the profit column and a status that tells `optimo` (`==========` in the output) from `sat` (a solution, optimum not proved), `insat` and `timeout`.
+- Instances are `tests/PlantaEnergia_NN.dzn`, as in Taller 1 (`<model>_NN.dzn`). `Datos.dzn` is the statement's example. Person A's experiment instances (`exp_01`–`exp_12`) are separate and stay in `verificacion/experimentos/`.
+- Don't write a new runner: `verificacion/correr_experimentos.py` already writes Taller 1's CSV columns plus `ganancia`, with status `optimo` (`==========` in the output), `sat` (a solution, optimum not proved), `insat` or `timeout`. From `scr/`: `mkdir -p results && python3 verificacion/correr_experimentos.py results/PlantaEnergia_gecode.csv 1,2,3,4,5 1,2,3 tests/*.dzn` (add `--solver=highs` or `--solver=coin-bc` for the MIP reference).
 - Protocol, as in Taller 1: Gecode, 60 s per run, goal = find the optimum and prove it. Nodes are the main metric because they don't depend on the machine; also report failures, peak depth, solve time, compile time and the best profit found. HiGHS and COIN-BC give the reference optimum.
 - Commit the CSVs. Every number in the report must come from a committed CSV or from a run whose command the report describes. The final tables come from one run on one machine.
 
@@ -135,7 +105,7 @@ latexmk -C                              # removes the build output
 
 - Each person edits only their own files (tables above). Those never conflict.
 - `main.tex`, `preamble.tex`, `front_page.tex` and the shared contract change by agreement. Adding entries to `bibliography.bib` is fine.
-- Pull before you start (`git pull --rebase`). Before pushing, run `latexmk` and the grep above.
+- Pull before you start (`git pull --rebase`). Before pushing, build the report and run the log check in the README.
 - Commit messages in English with a type prefix, as in Taller 1: `feat:`, `fix:`, `docs:`, `chore:`.
 - Cross-review in week 3: the reviewer checks the section against the `.mzn` and the CSVs and lists every mismatch; the owner fixes them.
 
@@ -148,13 +118,6 @@ One member uploads a zip named `PPR-CodEstudiante1-CodEstudiante2` (Taller 1 use
 3. Every `.mzn` and `.dzn` file.
 
 Build it in `dist/`, which is gitignored. `statement.pdf` is the March 2025 edition: check its deadline, group size and zip name against the current course announcement.
-
-## Open items
-
-- Confirm the interpretation of G with the professor.
-- Confirm that groups of three are allowed, and the zip name.
-- Copy Person A's model and scripts into `scr/power_plants/`.
-- Fill in the names of Persons B and C.
 
 ## For AI assistants
 
@@ -169,6 +132,6 @@ Read this whole section before doing anything in this repository.
 - **Respect the rubric.** Tight domains, no reification outside `impl` 1, disjunctions only where justified, no floats in the model.
 - **Language.** Report, `readme.txt` and code comments in Spanish; `CONTRIBUTING.md`, README and commit messages in English.
 - **LaTeX.** pdflatex: no Unicode math symbols, no packages `apa7` already loads, headings referenced by name.
-- **Check your work.** `latexmk` plus the grep for the report; `minizinc` or `run_tests.sh` for the model. Report what you ran and what it printed.
+- **Check your work.** `latexmk` plus the grep for the report; `minizinc` or `correr_experimentos.py` for the model. Report what you ran and what it printed.
 - **Keep it small.** Reuse Taller 1's scripts and conventions. Don't add dependencies, frameworks or files nobody asked for.
 - **Don't commit** `build/`, `dist/` or anything with personal data.

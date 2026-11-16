@@ -1,0 +1,15 @@
+% exp_10: diminuta, capacidades de 5 a 9 MW (semilla 8)
+nPlantas           = 3;
+nombrePlanta       = ["P1", "P2", "P3"];
+capacidad          = [6, 7, 8];
+costo              = [3, 4, 12];
+porcentajeAlto     = [50, 50, 60];
+diasAltoProhibidos = [2, 2, 2];
+nClientes     = 3;
+nombreCliente = ["S1", "S2", "S3"];
+pago          = [5, 14, 10];
+nDias   = 4;
+demanda = [|    3,    5,    7,    2
+           |    5,    5,    5,    5
+           |    5,    6,    3,    8 |];
+G = 50;

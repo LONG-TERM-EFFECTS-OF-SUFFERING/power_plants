@@ -1,0 +1,13 @@
+instancia,impl,estrategia,solver,estado,ganancia,tiempo_compilacion_s,tiempo_s,nodos,fallos,profundidad
+exp_01,5,1,highs,optimo,144630,0.128515,0.0010,1,,
+exp_02,5,1,highs,optimo,14485,0.189462,0.0010,1,,
+exp_03,5,1,highs,optimo,14015,0.126394,0.0029,1,,
+exp_04,5,1,highs,optimo,176598,0.145179,0.0062,1,,
+exp_05,5,1,highs,optimo,61629,0.140744,0.0048,1,,
+exp_06,5,1,highs,optimo,17827,0.135616,0.0063,1,,
+exp_07,5,1,highs,optimo,32996,0.13479,0.0040,1,,
+exp_08,5,1,highs,optimo,28561,0.13046,0.0055,1,,
+exp_09,5,1,highs,optimo,282,0.129772,0.0025,1,,
+exp_10,5,1,highs,optimo,268,0.125652,0.0047,1,,
+exp_11,5,1,highs,optimo,1131823,0.213461,0.0645,1,,
+exp_12,5,1,highs,optimo,2726977,0.532734,1.3871,1,,

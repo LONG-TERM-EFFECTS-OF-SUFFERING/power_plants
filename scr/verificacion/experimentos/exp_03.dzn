@@ -1,0 +1,15 @@
+% exp_03: capacidad escasa; el mínimo del 60 % es la restricción activa
+nPlantas           = 3;
+nombrePlanta       = ["N", "H", "T"];
+capacidad          = [40, 30, 20];
+costo              = [30, 10, 80];
+porcentajeAlto     = [80, 70, 90];
+diasAltoProhibidos = [2, 2, 3];
+nClientes     = 3;
+nombreCliente = ["S1", "S2", "S3"];
+pago          = [70, 90, 55];
+nDias   = 5;
+demanda = [|    8,   11,   10,   12,    9
+           |   15,   10,   20,   26,   34
+           |   30,   25,   41,   28,   13 |];
+G = 60;

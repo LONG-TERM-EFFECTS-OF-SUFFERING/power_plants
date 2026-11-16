@@ -1,0 +1,35 @@
+% =====================================================================
+% Datos.dzn - formato de entrada de PlantaEnergia.mzn
+% Todos los parámetros del modelo están en este archivo. Reglas:
+%   - Energía en MW enteros; costos y pagos en unidades monetarias enteras por MW
+%     (si un valor tiene decimales, multiplíquelos todos por la misma potencia de 10).
+%   - Los arreglos de centrales tienen nPlantas elementos, en el mismo orden;
+%     los de clientes tienen nClientes elementos.
+%   - demanda tiene una fila por cliente y una columna por día.
+% Este ejemplo usa las capacidades del enunciado (N = 1000, H = 300, T = 500 MW), el
+% régimen alto del enunciado (más del 80 %, prohibido 2 días seguidos) y G = 50.
+% Las demandas parten de la tabla del enunciado (80, 110, ..., 90; 150, 98, ..., 340;
+% 300, 250, ..., 134); los valores que el enunciado omite, los costos y los pagos son inventados.
+% =====================================================================
+
+% --- Centrales ---
+nPlantas           = 3;
+nombrePlanta       = ["N", "H", "T"];      % nuclear, hidroeléctrica, térmica
+capacidad          = [1000, 300, 500];     % MW por día
+costo              = [30, 10, 80];         % costo de producir 1 MW
+porcentajeAlto     = [80, 80, 80];         % régimen alto: producir más de este % de la capacidad
+diasAltoProhibidos = [2, 2, 2];            % prohibido estar 2 días seguidos en régimen alto
+
+% --- Clientes ---
+nClientes     = 3;
+nombreCliente = ["S1", "S2", "S3"];
+pago          = [70, 90, 55];              % pago por MW entregado
+
+% --- Horizonte y demanda ---
+nDias   = 5;
+demanda = [|  80, 110,  95, 120,  90       % S1
+           | 150,  98, 200, 260, 340       % S2
+           | 300, 250, 410, 280, 134 |];   % S3
+
+% --- Política de servicio ---
+G = 50;                                    % entregar al menos el 50 % de la demanda de cada cliente
