@@ -16,8 +16,8 @@ Workshop 2 (_Taller 2: Plantas de energía_) of _Programación por Restricciones
 | ----------------------------------------------------------------------- | ------------------ | ------- |
 | Model `PlantaEnergia.mzn`, `Datos.dzn`, experiments in `scr/verificacion/` | Person A (Brandon) | Done    |
 | Report: Descripción del problema, Modelo, Detalles de implementación    | Person A (Brandon) | Done    |
-| The 10 test instances in `scr/tests/`; report: Pruebas                  | Person B           | Pending |
-| Search strategies, solver comparison; report: La búsqueda, Análisis, Conclusiones | Person C | Pending |
+| The 10 test instances in `scr/tests/`; report: Pruebas                  | Person B (Santiago) | Pending |
+| Search strategies, solver comparison; report: La búsqueda, Análisis, Conclusiones | Person C (Alexis) | Pending |
 
 ## Repository layout
 
@@ -70,4 +70,3 @@ latexmk -C                              # removes the build output
 
 - Confirm the interpretation of G with the professor.
 - Confirm that groups of three are allowed, and the zip name.
-- Assign Persons B and C.
