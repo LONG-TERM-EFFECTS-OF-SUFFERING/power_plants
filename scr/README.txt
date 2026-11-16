@@ -2,8 +2,8 @@ TALLER 2 - PROGRAMACIÓN POR RESTRICCIONES
 Ejercicio 1: Plantas de energía (problema de optimización)
 
 REQUISITOS
-  MiniZinc 2.9 o superior (paquete completo, que incluye Gecode, Chuffed y HiGHS).
-  Probado con MiniZinc 2.9.3, Gecode 6.3.0 y HiGHS 1.9.0.
+  MiniZinc 2.9 o superior (paquete completo, que incluye Gecode, Chuffed, HiGHS y COIN-BC).
+  Probado con MiniZinc 2.9.3, Gecode 6.3.0, HiGHS 1.9.0 y COIN-BC 2.10.12.
   La carpeta verificacion/ usa además Python 3.
 
 ARCHIVOS

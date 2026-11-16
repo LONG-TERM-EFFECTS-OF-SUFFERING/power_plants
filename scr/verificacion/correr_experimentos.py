@@ -57,7 +57,7 @@ def main():
     with ThreadPoolExecutor(max_workers=2) as pool:
         filas = list(pool.map(correr, trabajos))
     with open(salida, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
+        w = csv.writer(f, lineterminator="\n")
         w.writerow(["instancia", "impl", "estrategia", "solver", "estado", "ganancia",
                     "tiempo_compilacion_s", "tiempo_s", "nodos", "fallos", "profundidad"])
         w.writerows(filas)

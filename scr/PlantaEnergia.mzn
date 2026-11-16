@@ -1,7 +1,8 @@
 % =====================================================================
 % Taller 2 - Programación por Restricciones
 % Ejercicio 1: Plantas de energía (problema de optimización, COP)
-% Autores: Brandon Calderón Prieto (2125974), <nombre 2> (<código 2>), <nombre 3> (<código 3>)
+% Autores: Brandon Calderón Prieto (2125974), Orlando Alexis Rengifo Mejia (2223878),
+%          Santiago Nuñez Ramirez (2225625)
 % Uso:     minizinc --solver gecode -s PlantaEnergia.mzn Datos.dzn -D "impl=5;strategy=2"
 %
 % Implementaciones (impl):
@@ -10,7 +11,7 @@
 %   3 = impl 2 + restricciones de dominancia RD1-RD4 (descartan soluciones que no pueden ser óptimas)
 %   4 = impl 3 + redundantes RR1 (producción máxima por ventana) y RR2 (cota de la ganancia)
 %   5 = impl 4 + ruptura de simetrías RS1 (centrales idénticas) y RS2 (clientes idénticos)
-% Estrategias (strategy) [punto de partida; las afina y compara la Persona C]:
+% Estrategias (strategy):
 %   1 = búsqueda por defecto del solver (sin anotación)
 %   2 = "orden de mérito": día por día, primero las entregas a los clientes que más pagan
 %       (indomain_max) y luego la producción de las centrales más baratas (indomain_max)

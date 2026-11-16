@@ -18,8 +18,8 @@ A partir de ellos se calculan los siguientes parámetros derivados, que siguen s
 \begin{itemize}
     \item $u_k = \floor{\rho_k \cdot \mathit{cap}_k / 100}$: umbral del régimen alto. Como la producción es entera, producir más de $\rho_k$~\% de la capacidad equivale a producir más de $u_k$~MW. Con los datos del enunciado, $u_H = 240$.
     \item $m_{s,i} = \ceil{G \cdot d_{s,i} / 100}$: entrega mínima del cliente $s$ el día $i$.
-    \item $\mathit{alto}_k$: verdadero si la central $k$ puede estar en régimen alto alguna vez, es decir, si $u_k < \mathit{cap}_k$ y $L_k \ge 2$.
-    \item $\bar{p}_k$: producción máxima de la central $k$; es $\mathit{cap}_k$ si $\mathit{alto}_k$, y $\min(u_k, \mathit{cap}_k)$ si no.
+    \item $\mathit{puedeAlto}_k$: verdadero si la central $k$ puede estar en régimen alto alguna vez, es decir, si $u_k < \mathit{cap}_k$ y $L_k \ge 2$.
+    \item $\bar{p}_k$: producción máxima de la central $k$; es $\mathit{cap}_k$ si $\mathit{puedeAlto}_k$, y $\min(u_k, \mathit{cap}_k)$ si no.
     \item $c_{\min} = \min_k c_k$: el menor costo de producción.
 \end{itemize}
 
@@ -101,7 +101,7 @@ R1 a R5 y la función objetivo recogen todas las condiciones del enunciado. El m
 
 Estas restricciones no son redundantes, porque eliminan soluciones factibles. Pero solo eliminan soluciones que se pueden mejorar moviendo 1~MW. Por lo tanto, toda solución óptima las cumple, y agregarlas no cambia el valor óptimo.
 
-Decimos que la central $k$ está \textit{saturada} el día $i$ si no puede producir 1~MW más sin arriesgar el régimen alto: $p_{k,i} = \bar{p}_k$, o $\mathit{alto}_k$ y $p_{k,i} = u_k$ (1~MW más la pondría en régimen alto).
+Decimos que la central $k$ está \textit{saturada} el día $i$ si no puede producir 1~MW más sin arriesgar el régimen alto: $p_{k,i} = \bar{p}_k$, o $\mathit{puedeAlto}_k$ y $p_{k,i} = u_k$ (1~MW más la pondría en régimen alto).
 
 \begin{itemize}
     \item \textbf{RD1 (clientes por pago).} Si $P_s > P_{s'}$, para todo día $i$: $e_{s,i} = d_{s,i} \lor e_{s',i} = m_{s',i}$. Si no, pasar 1~MW de $s'$ a $s$ aumenta la ganancia en $P_s - P_{s'} > 0$ sin cambiar la producción.
@@ -118,7 +118,7 @@ Las restricciones de dominancia son disyunciones, es decir, restricciones condic
 
 \textbf{RR1 (producción máxima por ventana).} En cada ventana de $L_k$ días consecutivos, la central $k$ produce a lo más $(L_k - 1) \cdot \mathit{cap}_k + u_k$:
 \[
-    \forall k \in \mathcal{K} \text{ con } \mathit{alto}_k,\ \forall i \in \{1, \dots, n - L_k + 1\}:\quad \sum_{j=i}^{i+L_k-1} p_{k,j} \le (L_k - 1)\,\mathit{cap}_k + u_k
+    \forall k \in \mathcal{K} \text{ con } \mathit{puedeAlto}_k,\ \forall i \in \{1, \dots, n - L_k + 1\}:\quad \sum_{j=i}^{i+L_k-1} p_{k,j} \le (L_k - 1)\,\mathit{cap}_k + u_k
 \]
 
 \textit{Por qué es redundante.} Por R5, en la ventana hay a lo más $L_k - 1$ días de régimen alto, en los que la central produce a lo más $\mathit{cap}_k$. En los demás días, que son al menos uno, produce a lo más $u_k$ por R4. Sumando, la producción de la ventana es a lo más $(L_k - 1) \cdot \mathit{cap}_k + u_k$. Con los datos del enunciado, la hidroeléctrica produce a lo más $300 + 240 = 540$~MW en cada par de días seguidos.
