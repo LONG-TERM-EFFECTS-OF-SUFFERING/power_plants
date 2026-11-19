@@ -1,0 +1,11 @@
+instancia,impl,estrategia,solver,estado,ganancia,tiempo_compilacion_s,tiempo_s,nodos,fallos,profundidad
+PlantaEnergia_01,5,2,gecode,optimo,6300,0.278079,0.0001486,29,14,11
+PlantaEnergia_02,5,2,gecode,optimo,20200,0.29008,0.0001063,8,3,5
+PlantaEnergia_03,5,2,gecode,optimo,6600,0.248402,0.0001902,89,44,10
+PlantaEnergia_04,5,2,gecode,optimo,100920,0.253317,0.0114535,7605,3795,22
+PlantaEnergia_05,5,2,gecode,optimo,45350,0.241587,0.0002626,67,32,9
+PlantaEnergia_06,5,2,gecode,optimo,240900,0.2494,0.0109613,8279,4139,59
+PlantaEnergia_07,5,2,gecode,optimo,27910,0.248867,0.785917,525439,262719,39
+PlantaEnergia_08,5,2,gecode,optimo,318500,0.253987,31.4485,12971111,6485555,41
+PlantaEnergia_09,5,2,gecode,sat,1482261,0.315257,59.6806,17579566,8789733,149
+PlantaEnergia_10,5,2,gecode,insat,,0.251349,2.12e-05,0,1,0

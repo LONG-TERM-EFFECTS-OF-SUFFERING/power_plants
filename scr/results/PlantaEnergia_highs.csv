@@ -1,0 +1,11 @@
+instancia,impl,estrategia,solver,estado,ganancia,tiempo_compilacion_s,tiempo_s,nodos,fallos,profundidad
+PlantaEnergia_01,2,1,highs,optimo,6300,0.296373,0.0110,1,,
+PlantaEnergia_02,2,1,highs,optimo,20200,0.293078,0.0080,1,,
+PlantaEnergia_03,2,1,highs,optimo,6600,0.250094,0.0100,1,,
+PlantaEnergia_04,2,1,highs,optimo,100920,0.249803,0.0240,1,,
+PlantaEnergia_05,2,1,highs,optimo,45350,0.265779,0.0080,1,,
+PlantaEnergia_06,2,1,highs,optimo,240900,0.263783,0.0110,1,,
+PlantaEnergia_07,2,1,highs,optimo,27910,0.26152,0.0100,1,,
+PlantaEnergia_08,2,1,highs,optimo,318500,0.252166,0.0120,1,,
+PlantaEnergia_09,2,1,highs,optimo,1482465,0.279402,1.4730,1,,
+PlantaEnergia_10,2,1,highs,insat,,0.269852,0.0010,0,,

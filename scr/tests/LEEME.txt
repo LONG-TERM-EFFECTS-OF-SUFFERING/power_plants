@@ -1,1 +1,0 @@
-% [Persona B] Aquí van las 10 instancias oficiales: PlantaEnergia_01.dzn ... PlantaEnergia_10.dzn

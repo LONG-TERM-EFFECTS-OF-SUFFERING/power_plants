@@ -1,0 +1,17 @@
+nPlantas           = 3;
+nombrePlanta       = ["N", "H", "T"];
+capacidad          = [400, 200, 300];
+costo              = [30, 10, 60];
+porcentajeAlto     = [80, 80, 80];
+diasAltoProhibidos = [2, 2, 2];
+
+nClientes     = 3;
+nombreCliente = ["S1", "S2", "S3"];
+pago          = [80, 70, 50];
+
+nDias   = 4;
+demanda = [| 400, 380, 500, 350
+           | 300, 320, 450, 300
+           | 300, 280, 400, 300 |];
+
+G = 70;
