@@ -1,15 +1,16 @@
 \section{Análisis}
 
+El análisis del modelo, es decir, el efecto de cada uno de sus elementos, está en Detalles de implementación, y el de la corrección de las pruebas, en Pruebas. Esta sección compara las estrategias de búsqueda y los solucionadores.
+
 \subsection{Comparación de estrategias}
 
-Para aislar el efecto de la búsqueda se mantuvo \texttt{impl=5} y se ejecutaron las tres estrategias con Gecode en cuatro instancias: \texttt{exp\_01}, pequeña; \texttt{exp\_08}, con centrales y clientes idénticos; y \texttt{exp\_11} y \texttt{exp\_12}, de 14 y 30 días. Cada corrida tuvo un límite de 60~s. La Tabla~\ref{tab:plantas-estrategias} presenta la ganancia encontrada y las estadísticas de búsqueda registradas en \texttt{verificacion/resultados/estrategias\_gecode.csv}.
+Para aislar el efecto de la búsqueda se mantuvo \texttt{impl} 5 y se ejecutaron las tres estrategias con Gecode en cuatro instancias: \texttt{exp\_01}, pequeña; \texttt{exp\_08}, con centrales y clientes idénticos; y \texttt{exp\_11} y \texttt{exp\_12}, de 14 y 30 días. Cada corrida tuvo un límite de 60~s. La Tabla~\ref{tab:plantas-estrategias} presenta la ganancia encontrada y las estadísticas de búsqueda registradas en \texttt{verificacion/resultados/estrategias\_gecode.csv}.
 
 \begin{table}[htbp]
-    \caption{Efecto de la estrategia de búsqueda con Gecode e \texttt{impl=5}}
+    \caption{Efecto de la estrategia de búsqueda (Gecode, \texttt{impl} 5)}
     \label{tab:plantas-estrategias}
-    \scriptsize
-    \setlength{\tabcolsep}{2.5pt}
-    \begin{tabularx}{\textwidth}{@{}Lccrrrr@{}}
+    \small
+    \begin{tabular}{@{}lccrrrr@{}}
         \toprule
         Instancia & \texttt{strategy} & Estado & Ganancia & Nodos & Fallos & Tiempo (s) \\
         \midrule
@@ -26,21 +27,49 @@ Para aislar el efecto de la búsqueda se mantuvo \texttt{impl=5} y se ejecutaron
         \texttt{exp\_12} & 2 & \texttt{sat} & 2\,718\,740 & 8\,393\,735 & 4\,196\,731 & 59,3138 \\
         \texttt{exp\_12} & 3 & \texttt{timeout} & --- & 1\,651\,957 & 825\,825 & 59,3452 \\
         \bottomrule
-    \end{tabularx}
+    \end{tabular}
 \end{table}
 
 En \texttt{exp\_01}, las tres estrategias encuentran y demuestran la misma ganancia. La estrategia 2 explora 9 nodos, frente a 13 de la búsqueda por defecto y 33 de la estrategia 3. La diferencia es pequeña en esta instancia, pero muestra que el orden de mérito no perjudica la búsqueda en el caso sencillo.
 
-En \texttt{exp\_08}, la estrategia 2 es la única que demuestra el óptimo dentro del límite: obtiene 28\,561 en 34,382~s. Las estrategias 1 y 3 terminan como \texttt{sat}, con ganancias de 27\,276 y 28\,169, respectivamente. La estrategia 3 explora menos nodos que la búsqueda por defecto, pero eso no basta para encontrar una solución mejor ni para demostrar optimalidad. La estrategia 2 combina una buena solución inicial con una exploración que permite cerrar la prueba en esta instancia.
+En \texttt{exp\_08}, la estrategia 2 es la única que demuestra el óptimo dentro del límite: obtiene 28\,561 en 34,382~s. Esta corrida explora los mismos 13\,665\,389 nodos que la de \texttt{impl} 5 en la Tabla~\ref{tab:plantas-ablacion}, hecha en otro equipo, donde tardó 27,3~s. Las estrategias 1 y 3 terminan como \texttt{sat}, con ganancias de 27\,276 y 28\,169, respectivamente. La estrategia 3 encuentra una solución mejor que la búsqueda por defecto, pero tampoco llega al óptimo; que explore menos nodos solo indica que cada nodo le cuesta más tiempo, porque las dos corridas llegan al límite. La estrategia 2 combina una buena solución inicial con una exploración que permite cerrar la prueba en esta instancia.
 
 En las instancias grandes, ninguna estrategia de Gecode demuestra optimalidad en 60~s. La estrategia 2 obtiene las mejores ganancias encontradas: 1\,126\,603 en \texttt{exp\_11} y 2\,718\,740 en \texttt{exp\_12}. La estrategia 1 encuentra soluciones inferiores, y la estrategia 3 no encuentra ninguna solución antes del límite (\texttt{timeout}); esto no significa que las instancias sean infactibles. Los nodos, por sí solos, no predicen la calidad de la solución: en \texttt{exp\_12}, por ejemplo, la estrategia 2 explora más nodos que la búsqueda por defecto, pero encuentra una ganancia mayor.
 
-En el alcance de estas pruebas, la estrategia 2 es la opción más consistente para Gecode: resuelve la instancia pequeña, demuestra el óptimo de \texttt{exp\_08} y encuentra las mejores soluciones factibles de las dos instancias grandes. No garantiza una prueba de optimalidad en horizontes largos, por lo que también se requieren referencias de otros solucionadores.
+La Tabla~\ref{tab:plantas-estrategias-pruebas} repite la comparación sobre las diez instancias de Pruebas. En las nueve corridas que terminan, los nodos de la estrategia 2 coinciden exactamente con los de la Tabla~\ref{tab:plantas-resultados}, obtenidos en otro equipo. En \texttt{PlantaEnergia\_09}, que llega al límite, la mejor ganancia también es la misma (1\,482\,261), aunque aquí se exploraron 31,2 millones de nodos en los 60~s, frente a 17,6 millones.
+
+\begin{table}[htbp]
+    \caption{Nodos de cada estrategia en las instancias de prueba (Gecode, \texttt{impl} 5)}
+    \label{tab:plantas-estrategias-pruebas}
+    \small
+    \begin{tabular}{@{}lrrr@{}}
+        \toprule
+        Instancia & \texttt{strategy} 1 & \texttt{strategy} 2 & \texttt{strategy} 3 \\
+        \midrule
+        \texttt{PlantaEnergia\_01} & 87 & 29 & 16 \\
+        \texttt{PlantaEnergia\_02} & 207 & 8 & 33 \\
+        \texttt{PlantaEnergia\_03} & 119 & 89 & 27 \\
+        \texttt{PlantaEnergia\_04} & 49\,211 & 7\,605 & 4\,517 \\
+        \texttt{PlantaEnergia\_05} & 1\,259 & 67 & 199 \\
+        \texttt{PlantaEnergia\_06} & 21\,455 & 8\,279 & 559 \\
+        \texttt{PlantaEnergia\_07} & 3,1~M & 525\,439 & 1,4~M \\
+        \texttt{PlantaEnergia\_08} & $\dagger$\,59,2~M & 13,0~M & $\ddagger$\,25,2~M \\
+        \texttt{PlantaEnergia\_09} & $\dagger$\,29,7~M & $\dagger$\,31,2~M & $\ddagger$\,10,5~M \\
+        \texttt{PlantaEnergia\_10} & 0 & 0 & 0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+En la tabla, $\dagger$ indica que la corrida alcanzó el límite de 60~s con una solución sin demostrar que es óptima, y $\ddagger$, que lo alcanzó sin encontrar ninguna; el número que sigue son los nodos explorados hasta ese momento, y M abrevia millones. Las tres estrategias demuestran el óptimo de las siete primeras instancias y, sin ramificar, la infactibilidad de \texttt{PlantaEnergia\_10}. En esas siete, la búsqueda por defecto siempre explora más nodos que la estrategia 2, y la estrategia 3 explora menos que la 2 en cuatro (\texttt{01}, \texttt{03}, \texttt{04} y \texttt{06}). Pero, como en \texttt{exp\_11} y \texttt{exp\_12}, la estrategia 3 no encuentra ninguna solución de las dos instancias más grandes, y solo la estrategia 2 demuestra el óptimo de \texttt{PlantaEnergia\_08}, como ocurrió con \texttt{exp\_08}; la búsqueda por defecto se queda en 315\,440, a 0,96~\% del óptimo. En \texttt{PlantaEnergia\_09} ninguna estrategia demuestra el óptimo: la 2 queda a 0,014~\% del de HiGHS, y la búsqueda por defecto, con 1\,404\,729, a 5,2~\%.
+
+Una explicación de estas diferencias es el orden en que cada estrategia prueba los valores. La estrategia 2 decide primero las entregas a los clientes que más pagan y la producción de las centrales más baratas, y empieza por su valor máximo, que es el mismo orden en que las reglas de dominancia RD1 a RD3 asignan la energía; así llega pronto a soluciones buenas, y con ellas la ramificación y acotamiento poda más. La estrategia 3, en cambio, explora primero la mitad inferior de cada dominio, es decir, entregas y producciones pequeñas, que reducen la ganancia y que RD3 prohíbe mientras quede capacidad rentable libre. En las instancias pequeñas eso no le impide terminar, pero en las grandes no llega a ninguna solución en 60~s.
+
+En el alcance de estas pruebas, la estrategia 2 es la opción más consistente para Gecode: resuelve las instancias pequeñas, demuestra el óptimo de \texttt{exp\_08} y de \texttt{PlantaEnergia\_08} y encuentra las mejores soluciones factibles de las instancias grandes. No garantiza una prueba de optimalidad en horizontes largos, por lo que también se requieren referencias de otros solucionadores.
 
 \subsection{Comparación de solucionadores}
 
 Se ejecutaron HiGHS y COIN-BC con brecha absoluta y relativa cero para obtener valores de referencia exactos. En las doce instancias experimentales, ambos reportan estado \texttt{optimo} y coinciden en la ganancia. Sus resultados están en \texttt{verificacion/resultados/referencia\_highs.csv} y \texttt{verificacion/resultados/referencia\_coinbc.csv}; sus conteos de nodos no se comparan con los de Gecode porque son solucionadores MIP y reportan estadísticas distintas.
 
-En \texttt{exp\_11}, el óptimo de ambos MIP es 1\,131\,823: HiGHS tarda 0,0645~s y COIN-BC 0,1418~s en resolver, mientras Gecode con \texttt{strategy=2} encuentra 1\,126\,603 en 59,5063~s sin demostrarlo. La diferencia es 5\,220, equivalente al 0,46~\% del óptimo. En \texttt{exp\_12}, ambos MIP demuestran 2\,726\,977; HiGHS tarda 1,3871~s y COIN-BC 5,8574~s. Gecode encuentra 2\,718\,740 en 59,3138~s, sin probar optimalidad, a 8\,237 unidades (0,30~\%) del óptimo. Los tiempos de resolución provienen de las columnas \texttt{tiempo\_s}; el tiempo de compilación se registra por separado en los mismos CSV.
+En \texttt{exp\_11}, el óptimo de ambos MIP es 1\,131\,823: HiGHS tarda 0,0645~s y COIN-BC 0,1418~s en resolver, mientras Gecode con la estrategia 2 llega a 1\,126\,603 en el límite de 60~s sin demostrar que es óptimo. La diferencia es 5\,220, equivalente al 0,46~\% del óptimo. En \texttt{exp\_12}, ambos MIP demuestran 2\,726\,977; HiGHS tarda 1,3871~s y COIN-BC 5,8574~s. Gecode llega a 2\,718\,740 en el límite, sin probar optimalidad, a 8\,237 unidades (0,30~\%) del óptimo. En las corridas de Detalles de implementación, hechas en otro equipo, la misma configuración llegó a 2\,718\,866, también a 0,30~\% del óptimo. Los tiempos de resolución provienen de las columnas \texttt{tiempo\_s}; el tiempo de compilación se registra por separado en los mismos CSV.
 
 En estas instancias grandes, los MIP resultan una referencia especialmente útil: demuestran el óptimo en segundos y permiten medir la distancia de la mejor solución de Gecode sin confundir una corrida \texttt{sat} con una prueba de optimalidad. HiGHS fue el más rápido de los dos en ambos casos; esta comparación describe estas instancias y no implica que lo sea para cualquier modelo o tamaño.

@@ -1,3 +1,4 @@
+% PlantaEnergia_07: cinco centrales, con pares de centrales y de clientes idénticos (RS1 y RS2)
 nPlantas           = 5;
 nombrePlanta       = ["N1", "N2", "H1", "H2", "T1"];
 capacidad          = [80, 80, 40, 40, 60];

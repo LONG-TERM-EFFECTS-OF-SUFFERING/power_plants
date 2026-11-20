@@ -1,3 +1,4 @@
+% PlantaEnergia_08: múltiples niveles de precios y costos; poda por dominancia
 nPlantas           = 4;
 nombrePlanta       = ["H", "N", "G1", "T"];
 capacidad          = [350, 600, 400, 300];

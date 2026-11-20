@@ -1,3 +1,4 @@
+% PlantaEnergia_09: horizonte largo de 25 días para estresar la búsqueda
 nPlantas           = 5;
 nombrePlanta       = ["H1", "N1", "N2", "G1", "T1"];
 capacidad          = [300, 500, 450, 350, 400];

@@ -1,3 +1,4 @@
+% PlantaEnergia_03: el cliente S2 paga menos que el menor costo y recibe exactamente el mínimo G %
 nPlantas           = 2;
 nombrePlanta       = ["P1", "P2"];
 capacidad          = [200, 150];

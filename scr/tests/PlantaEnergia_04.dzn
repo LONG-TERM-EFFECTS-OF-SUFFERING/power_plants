@@ -1,3 +1,4 @@
+% PlantaEnergia_04: capacidad escasa frente a la demanda; priorización por pago (RD1)
 nPlantas           = 3;
 nombrePlanta       = ["N", "H", "T"];
 capacidad          = [200, 100, 150];

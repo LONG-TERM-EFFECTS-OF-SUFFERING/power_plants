@@ -16,8 +16,9 @@ Workshop 2 (_Taller 2: Plantas de energía_) of _Programación por Restricciones
 | ----------------------------------------------------------------------- | ------------------ | ------- |
 | Model `PlantaEnergia.mzn`, `Datos.dzn`, experiments in `scr/verificacion/` | Person A (Brandon) | Done    |
 | Report: Descripción del problema, Modelo, Detalles de implementación    | Person A (Brandon) | Done    |
-| The 10 test instances in `scr/tests/`; report: Pruebas                  | Person B (Santiago) | Pending |
-| Search strategies, solver comparison; report: La búsqueda, Análisis, Conclusiones | Person C (Alexis) | Pending |
+| The 10 test instances in `scr/tests/`; report: Pruebas                  | Person B (Santiago) | Done    |
+| Search strategies, solver comparison; report: La búsqueda, Análisis, Conclusiones | Person C (Alexis) | Done    |
+| Integration: introduction, cross-section consistency, delivery zip      | Person A (Brandon) | Done    |
 
 ## Repository layout
 
@@ -35,8 +36,10 @@ Workshop 2 (_Taller 2: Plantas de energía_) of _Programación por Restricciones
 │   ├── Datos.dzn                input format, with the statement's example
 │   ├── README.txt               files and how to run them (Spanish, part of the delivery)
 │   ├── tests/                   the 10 test instances, PlantaEnergia_NN.dzn
+│   ├── results/                 runs on the 10 test instances (Gecode, HiGHS)
 │   └── verificacion/            Person A's experiments: scripts, experimentos/, resultados/
-└── build/                       LaTeX output (gitignored)
+├── build/                       LaTeX output (gitignored)
+└── dist/                        delivery zip (gitignored)
 ```
 
 ## Requirements
@@ -52,11 +55,12 @@ Workshop 2 (_Taller 2: Plantas de energía_) of _Programación por Restricciones
 # The model. -s prints statistics; a final "==========" means the optimum was proved.
 cd scr
 minizinc --solver gecode -s PlantaEnergia.mzn Datos.dzn -D "impl=5;strategy=2"
-minizinc --solver highs  -s PlantaEnergia.mzn Datos.dzn -D "impl=5;strategy=2"
+minizinc --solver highs  -s PlantaEnergia.mzn Datos.dzn -D "impl=5;strategy=1"
 
-# Every instance x impl x strategy, into a CSV (from scr/)
-mkdir -p results
-python3 verificacion/correr_experimentos.py results/PlantaEnergia_gecode.csv 1,2,3,4,5 1,2,3 tests/*.dzn
+# The 10 test instances: impl x strategy into a CSV (from scr/; the committed CSVs)
+python3 verificacion/correr_experimentos.py results/PlantaEnergia_gecode_base.csv 5 2 tests/*.dzn
+python3 verificacion/correr_experimentos.py results/PlantaEnergia_gecode_estrategias.csv 5 1,2,3 tests/*.dzn
+python3 verificacion/correr_experimentos.py --solver=highs results/PlantaEnergia_highs.csv 2 1 tests/*.dzn
 
 # The report, from the repository root
 latexmk                                 # writes build/main.pdf
@@ -64,7 +68,9 @@ grep -E '^!|undefined' build/main.log   # must print nothing
 latexmk -C                              # removes the build output
 ```
 
-`scr/README.txt` lists what `impl` and `strategy` mean and how to repeat Person A's verification and experiments.
+`scr/README.txt` lists what `impl` and `strategy` mean and how to repeat every run in the report.
+
+The delivery zip, `dist/2125974-2223878-2225625-Taller2-PPR-2026-II.zip`, follows Taller 1: `readme.txt` (from `scr/README.txt`), `InformeTaller2.pdf` (from `build/main.pdf`) and the contents of `scr/`.
 
 ## Open items
 

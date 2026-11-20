@@ -1,3 +1,4 @@
+% PlantaEnergia_01: mini-instancia base; rechazo de producción cara no rentable (RD4)
 nPlantas           = 2;
 nombrePlanta       = ["H", "T"];
 capacidad          = [100, 100];

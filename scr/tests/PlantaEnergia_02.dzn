@@ -1,3 +1,4 @@
+% PlantaEnergia_02: mini-instancia con la restricción de régimen alto activa (R4 y R5)
 nPlantas           = 2;
 nombrePlanta       = ["H", "T"];
 capacidad          = [100, 100];

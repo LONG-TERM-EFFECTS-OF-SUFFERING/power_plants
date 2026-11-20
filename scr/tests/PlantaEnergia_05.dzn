@@ -1,3 +1,4 @@
+% PlantaEnergia_05: una sola central, con porcentajeAlto = 75 y diasAltoProhibidos = 3
 nPlantas           = 1;
 nombrePlanta       = ["H1"];
 capacidad          = [400];

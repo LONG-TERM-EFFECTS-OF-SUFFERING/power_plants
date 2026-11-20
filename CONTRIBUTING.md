@@ -34,7 +34,7 @@ Person B's 10 instances must include:
 2. Week 2: A adds the regime rule for every plant and the redundant and symmetry constraints. B finishes the 10 instances and the optimality checks. C runs the strategies and solvers.
 3. Week 3: C runs the final experiment on one machine. Everyone writes their section, then the cross-review.
 
-**Status.** Person A's part is done: the report text in `content/01` to `content/03`, and in `scr/` the model, `Datos.dzn` and the experiments in `verificacion/` (scripts, instances `exp_01`–`exp_12` and results). `tests/` waits for Person B.
+**Status.** All three parts are done and integrated. Person B's instances are in `tests/` with their runs in `results/`; Person C's strategy runs are in `verificacion/resultados/estrategias_gecode.csv` and `results/PlantaEnergia_gecode_estrategias.csv`. The runs were made on different machines, so the report compares times only within one machine; `content/00-introduction.tex` explains this.
 
 ## The shared contract
 
@@ -53,6 +53,7 @@ The repository layout, the requirements and how to run everything are in the [RE
 
 | File                            | Report section             | Owner |
 | ------------------------------- | -------------------------- | ----- |
+| `content/00-introduction.tex`   | Introduction (no heading)  | A     |
 | `content/01-problem.tex`        | Descripción del problema   | A     |
 | `content/02-model.tex`          | Modelo                     | A     |
 | `content/03-implementation.tex` | Detalles de implementación | A     |

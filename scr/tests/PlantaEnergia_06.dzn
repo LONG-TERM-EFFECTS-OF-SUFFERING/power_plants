@@ -1,3 +1,4 @@
+% PlantaEnergia_06: centrales heterogéneas (diasAltoProhibidos 1, 2 y 3) y bloqueo del régimen alto
 nPlantas           = 3;
 nombrePlanta       = ["N", "H", "T"];
 capacidad          = [600, 300, 400];
