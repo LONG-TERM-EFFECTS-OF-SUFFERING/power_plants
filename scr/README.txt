@@ -1,65 +1,97 @@
-TALLER 2 - PROGRAMACIÓN POR RESTRICCIONES
-Ejercicio 1: Plantas de energía (problema de optimización)
+TALLER 2 - PROGRAMACION POR RESTRICCIONES
+Ejercicio 1: Plantas de energia 
+
+CONTENIDO DE LA ENTREGA
+  readme.txt                  Este archivo: contenido y comandos de ejecucion.
+  informe.pdf                 Informe final, generado desde main.tex.
+  PlantaEnergia.mzn           Modelo generico de optimizacion.
+  Datos.dzn                   Formato de entrada y ejemplo del enunciado.
+  tests/PlantaEnergia_01.dzn a tests/PlantaEnergia_10.dzn
+                              Diez instancias de prueba.
+  content/01-problem.tex a content/07-conclusions.tex
+                              Secciones del informe en archivos LaTeX.
+  main.tex, preamble.tex,
+  front_page.tex              Archivos LaTeX de entrada, formato y portada.
+  bibliography.bib            Referencias del informe.
+  verificacion/verificar_optimo.py
+                              Verificacion independiente del optimo en instancias pequenas.
+  verificacion/generar_experimentos.py
+                              Genera las instancias de experimentacion.
+  verificacion/experimentos/exp_01.dzn a exp_12.dzn
+                              Instancias para ablacion, estrategias y solvers.
+  verificacion/correr_experimentos.py
+                              Ejecutor comun de experimentos y exportacion CSV.
+  results/PlantaEnergia_gecode_base.csv
+  results/PlantaEnergia_highs.csv
+                              Resultados sobre las diez instancias de prueba.
+  verificacion/resultados/ablacion_gecode.csv
+  verificacion/resultados/estrategias_gecode.csv
+  verificacion/resultados/grandes_gecode.csv
+  verificacion/resultados/dominancia_highs.csv
+  verificacion/resultados/referencia_highs.csv
+  verificacion/resultados/referencia_coinbc.csv
+                              CSV de ablacion, busqueda y referencias de optimalidad.
 
 REQUISITOS
-  MiniZinc 2.9 o superior (paquete completo, que incluye Gecode, Chuffed, HiGHS y COIN-BC).
-  Probado con MiniZinc 2.9.3, Gecode 6.3.0, HiGHS 1.9.0 y COIN-BC 2.10.12.
-  La carpeta verificacion/ usa además Python 3.
+  MiniZinc 2.9 o superior con Gecode, HiGHS y COIN-BC.
+  Python 3 para los scripts de verificacion.
+  Una distribucion LaTeX con latexmk, biber, apa7 y biblatex-apa para compilar el informe.
 
-ARCHIVOS
-  PlantaEnergia.mzn          Modelo genérico (cualquier número de centrales, clientes y días).
-  Datos.dzn                  Formato de entrada, con un ejemplo basado en el enunciado.
-  tests/                     [Persona B] Las 10 instancias oficiales de pruebas.
-  verificacion/verificar_optimo.py
-                             Compara el óptimo de MiniZinc con un solucionador independiente
-                             (programación dinámica escrita desde el enunciado) en instancias
-                             pequeñas aleatorias.
-  verificacion/generar_experimentos.py
-                             Genera las instancias de verificacion/experimentos/.
-  verificacion/experimentos/exp_01..12.dzn
-                             Instancias para medir el efecto de cada elemento del modelo.
-  verificacion/correr_experimentos.py
-                             Corre esas instancias y guarda las estadísticas en un CSV.
-  verificacion/resultados/   Estadísticas de esas corridas.
-
-CÓMO EJECUTAR EL MODELO
-  El modelo tiene dos parámetros de experimentación que se pasan con -D:
-    impl      = qué implementación de las restricciones usar
-    strategy  = qué estrategia de búsqueda usar
+COMO EJECUTAR EL MODELO
+  Ejecutar los comandos desde esta carpeta (scr/):
 
   minizinc --solver gecode -s PlantaEnergia.mzn Datos.dzn -D "impl=5;strategy=2"
+  minizinc --solver highs  -s PlantaEnergia.mzn Datos.dzn -D "impl=5;strategy=1"
 
-  -s imprime las estadísticas (nodes, failures, peakDepth, solveTime, flatTime).
-  La salida termina en "==========" cuando el solver demostró que la solución es óptima.
-  En el MiniZinc IDE, al ejecutar se piden los valores de impl y strategy.
+  El parametro impl selecciona la implementacion:
+    1 = R4 reificada.
+    2 = R4 lineal.
+    3 = impl 2 mas dominancia RD1-RD4.
+    4 = impl 3 mas restricciones redundantes RR1-RR2.
+    5 = impl 4 mas ruptura de simetrias RS1-RS2.
 
-  Recomendado: impl=5 strategy=2.
+  El parametro strategy selecciona la busqueda:
+    1 = busqueda por defecto del solver.
+    2 = orden de merito: entregas de mayor a menor pago y producciones de menor a
+        mayor costo, con indomain_max; regimen alto con indomain_min.
+    3 = dom_w_deg e indomain_split para entregas y producciones; regimen alto con
+        indomain_min.
 
-  impl 1 = régimen alto (R4) con restricciones reificadas
-  impl 2 = régimen alto (R4) con dos desigualdades lineales
-  impl 3 = impl 2 + restricciones de dominancia RD1-RD4
-  impl 4 = impl 3 + restricciones redundantes RR1 y RR2
-  impl 5 = impl 4 + ruptura de simetrías RS1 y RS2
-  strategy 1 = búsqueda por defecto del solver
-  strategy 2 = orden de mérito: día por día, entregas a los clientes que más pagan y
-               producción de las centrales más baratas, ambas con indomain_max
-  strategy 3 = dom_w_deg / indomain_split
+  Los parametros se pasan con -D. "----------" separa soluciones; solo "==========" al
+  final indica que el solver termino y demostro el optimo.
 
-  Formato de datos (ver los comentarios de Datos.dzn):
-    nPlantas, nombrePlanta, capacidad, costo, porcentajeAlto, diasAltoProhibidos
-      (un valor por central, en el mismo orden);
-    nClientes, nombreCliente, pago (un valor por cliente);
-    nDias, demanda (una fila por cliente, una columna por día) y G.
-  Todas las cantidades son enteras (MW enteros; costos y pagos por MW).
+COMO REPETIR LAS PRUEBAS
+  Desde scr/, el siguiente comando ejecuta las diez instancias con las cinco
+  implementaciones y las tres estrategias, con Gecode:
 
-CÓMO REPETIR LA VERIFICACIÓN Y LOS EXPERIMENTOS (desde verificacion/)
-  python3 verificar_optimo.py 400 2026              (impl 1-5 x strategy 1-3, instancias variadas)
-  python3 verificar_optimo.py 300 77 dominancia     (impl 3 y 5, instancias con más capacidad)
-  python3 generar_experimentos.py experimentos ../Datos.dzn
-  python3 correr_experimentos.py resultados/ablacion_gecode.csv 1,2,3,4,5 2 experimentos/exp_0[1-9].dzn experimentos/exp_10.dzn
-  python3 correr_experimentos.py resultados/grandes_gecode.csv 3,4,5 2 experimentos/exp_11.dzn experimentos/exp_12.dzn
-  python3 correr_experimentos.py --solver=coin-bc resultados/referencia_coinbc.csv 5 1 experimentos/*.dzn
-  python3 correr_experimentos.py --solver=highs resultados/referencia_highs.csv 5 1 experimentos/*.dzn
-  python3 correr_experimentos.py --solver=highs resultados/dominancia_highs.csv 2,3 1 experimentos/exp_11.dzn experimentos/exp_12.dzn
-  Con --solver=highs o --solver=coin-bc se exige brecha de optimalidad 0; esos solvers dan el óptimo
-  de referencia para comparar las soluciones de Gecode.
+  python3 verificacion/correr_experimentos.py results/PlantaEnergia_gecode.csv 1,2,3,4,5 1,2,3 tests/*.dzn
+
+  Para obtener la referencia de HiGHS sobre las diez instancias:
+
+  python3 verificacion/correr_experimentos.py --solver=highs results/PlantaEnergia_highs.csv 5 1 tests/*.dzn
+
+  El ejecutor impone brecha absoluta y relativa cero para HiGHS y COIN-BC. Registra
+  el estado (optimo, sat, insat o timeout), la ganancia, los tiempos de compilacion
+  y resolucion, los nodos, fallos y profundidad cuando el solver los reporta.
+
+COMO REPETIR LOS EXPERIMENTOS DE LA BUSQUEDA
+  Las cuatro instancias representativas usadas para comparar strategy=1, 2 y 3
+  se ejecutan asi:
+
+  python3 verificacion/correr_experimentos.py verificacion/resultados/estrategias_gecode.csv 5 1,2,3 verificacion/experimentos/exp_01.dzn verificacion/experimentos/exp_08.dzn verificacion/experimentos/exp_11.dzn verificacion/experimentos/exp_12.dzn
+
+  Referencias exactas con los dos solvers MIP, sobre las doce instancias:
+
+  python3 verificacion/correr_experimentos.py --solver=highs verificacion/resultados/referencia_highs.csv 5 1 verificacion/experimentos/*.dzn
+  python3 verificacion/correr_experimentos.py --solver=coin-bc verificacion/resultados/referencia_coinbc.csv 5 1 verificacion/experimentos/*.dzn
+
+  Los solvers MIP demuestran el optimo de referencia. Sus nodos no son comparables
+  con los de Gecode.
+
+COMPILAR EL INFORME
+  Desde la carpeta raiz del proyecto:
+
+  latexmk
+
+  El PDF se genera en build/main.pdf. Para la entrega, copiarlo como informe.pdf
+  junto con este archivo, PlantaEnergia.mzn, Datos.dzn y las diez instancias .dzn.

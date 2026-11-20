@@ -1,3 +1,7 @@
 \section{Conclusiones}
 
-% TODO (Persona C).
+Las mediciones muestran que la anotación de búsqueda influye tanto en la calidad de las soluciones encontradas como en la posibilidad de demostrar que son óptimas. La estrategia por orden de mérito fue la más consistente en las cuatro instancias comparadas: encontró el óptimo de \texttt{exp\_01} y \texttt{exp\_08}, y las mejores soluciones de Gecode en las dos instancias grandes. No obstante, las corridas de 14 y 30 días terminaron sin prueba de optimalidad, y \texttt{dom\_w\_deg} con división de dominios no encontró soluciones en ellas dentro de 60~s. Por esto, los resultados no justifican afirmar que una estrategia sea superior para toda instancia.
+
+HiGHS y COIN-BC demostraron los mismos óptimos en las doce instancias experimentales y permitieron cuantificar las brechas de Gecode en las grandes: 0,46~\% y 0,30~\%. Esto respalda el uso de solucionadores MIP como referencia exacta para este modelo. También confirma que \texttt{sat} solo indica que se encontró una solución factible; no debe interpretarse como una prueba de optimalidad.
+
+En conjunto, las instancias pequeñas sirven para verificar el comportamiento del modelo y comparar las anotaciones, mientras que las grandes exhiben el límite práctico de Gecode bajo el plazo adoptado. La estrategia 2 es una elección razonable cuando se usa Gecode y se busca una buena solución dentro de un tiempo acotado; para certificar el óptimo en las instancias grandes probadas, HiGHS fue la alternativa más rápida. Estas conclusiones se restringen a los datos, implementaciones y límite de 60~s de los experimentos realizados.

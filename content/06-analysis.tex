@@ -1,4 +1,46 @@
 \section{Análisis}
 
-% TODO (Persona C): análisis del modelo, de las pruebas y de las estrategias de búsqueda.
-% Nota de la Persona A: el óptimo de referencia de las instancias grandes debe confirmarse con HiGHS y COIN-BC.
+\subsection{Comparación de estrategias}
+
+Para aislar el efecto de la búsqueda se mantuvo \texttt{impl=5} y se ejecutaron las tres estrategias con Gecode en cuatro instancias: \texttt{exp\_01}, pequeña; \texttt{exp\_08}, con centrales y clientes idénticos; y \texttt{exp\_11} y \texttt{exp\_12}, de 14 y 30 días. Cada corrida tuvo un límite de 60~s. La Tabla~\ref{tab:plantas-estrategias} presenta la ganancia encontrada y las estadísticas de búsqueda registradas en \texttt{verificacion/resultados/estrategias\_gecode.csv}.
+
+\begin{table}[htbp]
+    \caption{Efecto de la estrategia de búsqueda con Gecode e \texttt{impl=5}}
+    \label{tab:plantas-estrategias}
+    \scriptsize
+    \setlength{\tabcolsep}{2.5pt}
+    \begin{tabularx}{\textwidth}{@{}Lccrrrr@{}}
+        \toprule
+        Instancia & \texttt{strategy} & Estado & Ganancia & Nodos & Fallos & Tiempo (s) \\
+        \midrule
+        \texttt{exp\_01} & 1 & \texttt{optimo} & 144\,630 & 13 & 3 & 0,0002376 \\
+        \texttt{exp\_01} & 2 & \texttt{optimo} & 144\,630 & 9 & 4 & 0,0003483 \\
+        \texttt{exp\_01} & 3 & \texttt{optimo} & 144\,630 & 33 & 13 & 0,0002871 \\
+        \texttt{exp\_08} & 1 & \texttt{sat} & 27\,276 & 37\,000\,767 & 18\,500\,367 & 59,5392 \\
+        \texttt{exp\_08} & 2 & \texttt{optimo} & 28\,561 & 13\,665\,389 & 6\,832\,694 & 34,382 \\
+        \texttt{exp\_08} & 3 & \texttt{sat} & 28\,169 & 25\,167\,789 & 12\,583\,858 & 59,5541 \\
+        \texttt{exp\_11} & 1 & \texttt{sat} & 882\,731 & 16\,324\,732 & 8\,162\,322 & 59,5076 \\
+        \texttt{exp\_11} & 2 & \texttt{sat} & 1\,126\,603 & 13\,441\,024 & 6\,720\,472 & 59,5063 \\
+        \texttt{exp\_11} & 3 & \texttt{timeout} & --- & 3\,673\,638 & 1\,836\,782 & 59,4321 \\
+        \texttt{exp\_12} & 1 & \texttt{sat} & 2\,406\,482 & 7\,527\,168 & 3\,763\,431 & 59,3348 \\
+        \texttt{exp\_12} & 2 & \texttt{sat} & 2\,718\,740 & 8\,393\,735 & 4\,196\,731 & 59,3138 \\
+        \texttt{exp\_12} & 3 & \texttt{timeout} & --- & 1\,651\,957 & 825\,825 & 59,3452 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+En \texttt{exp\_01}, las tres estrategias encuentran y demuestran la misma ganancia. La estrategia 2 explora 9 nodos, frente a 13 de la búsqueda por defecto y 33 de la estrategia 3. La diferencia es pequeña en esta instancia, pero muestra que el orden de mérito no perjudica la búsqueda en el caso sencillo.
+
+En \texttt{exp\_08}, la estrategia 2 es la única que demuestra el óptimo dentro del límite: obtiene 28\,561 en 34,382~s. Las estrategias 1 y 3 terminan como \texttt{sat}, con ganancias de 27\,276 y 28\,169, respectivamente. La estrategia 3 explora menos nodos que la búsqueda por defecto, pero eso no basta para encontrar una solución mejor ni para demostrar optimalidad. La estrategia 2 combina una buena solución inicial con una exploración que permite cerrar la prueba en esta instancia.
+
+En las instancias grandes, ninguna estrategia de Gecode demuestra optimalidad en 60~s. La estrategia 2 obtiene las mejores ganancias encontradas: 1\,126\,603 en \texttt{exp\_11} y 2\,718\,740 en \texttt{exp\_12}. La estrategia 1 encuentra soluciones inferiores, y la estrategia 3 no encuentra ninguna solución antes del límite (\texttt{timeout}); esto no significa que las instancias sean infactibles. Los nodos, por sí solos, no predicen la calidad de la solución: en \texttt{exp\_12}, por ejemplo, la estrategia 2 explora más nodos que la búsqueda por defecto, pero encuentra una ganancia mayor.
+
+En el alcance de estas pruebas, la estrategia 2 es la opción más consistente para Gecode: resuelve la instancia pequeña, demuestra el óptimo de \texttt{exp\_08} y encuentra las mejores soluciones factibles de las dos instancias grandes. No garantiza una prueba de optimalidad en horizontes largos, por lo que también se requieren referencias de otros solucionadores.
+
+\subsection{Comparación de solucionadores}
+
+Se ejecutaron HiGHS y COIN-BC con brecha absoluta y relativa cero para obtener valores de referencia exactos. En las doce instancias experimentales, ambos reportan estado \texttt{optimo} y coinciden en la ganancia. Sus resultados están en \texttt{verificacion/resultados/referencia\_highs.csv} y \texttt{verificacion/resultados/referencia\_coinbc.csv}; sus conteos de nodos no se comparan con los de Gecode porque son solucionadores MIP y reportan estadísticas distintas.
+
+En \texttt{exp\_11}, el óptimo de ambos MIP es 1\,131\,823: HiGHS tarda 0,0645~s y COIN-BC 0,1418~s en resolver, mientras Gecode con \texttt{strategy=2} encuentra 1\,126\,603 en 59,5063~s sin demostrarlo. La diferencia es 5\,220, equivalente al 0,46~\% del óptimo. En \texttt{exp\_12}, ambos MIP demuestran 2\,726\,977; HiGHS tarda 1,3871~s y COIN-BC 5,8574~s. Gecode encuentra 2\,718\,740 en 59,3138~s, sin probar optimalidad, a 8\,237 unidades (0,30~\%) del óptimo. Los tiempos de resolución provienen de las columnas \texttt{tiempo\_s}; el tiempo de compilación se registra por separado en los mismos CSV.
+
+En estas instancias grandes, los MIP resultan una referencia especialmente útil: demuestran el óptimo en segundos y permiten medir la distancia de la mejor solución de Gecode sin confundir una corrida \texttt{sat} con una prueba de optimalidad. HiGHS fue el más rápido de los dos en ambos casos; esta comparación describe estas instancias y no implica que lo sea para cualquier modelo o tamaño.
